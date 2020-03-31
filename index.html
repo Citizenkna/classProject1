@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+
+    <title>AudioBuffer example</title>
+
+    <link rel="stylesheet" href="">
+
+  </head>
+
+  <body>
+    <h1>AudioBuffer example</h1>
+    <button id="button">start</button>
+    <button id="stop">stop</button>
+    <button id="this">things</button>
+    <button id="thing">thing</button>
+    <pre></pre>
+  </body>
+
+
+<script>
+    
+
+document.getElementById('button').addEventListener('click', function() {
+
+
+
+
+var ctx = new(window.AudioContext || window.webkitAudioContext)();
+
+var osc = ctx.createOscillator();
+var osc2 = ctx.createOscillator();
+var gainNode = ctx.createGain();
+var filterL = ctx.createBiquadFilter();
+var filterR = ctx.createBiquadFilter();
+var gainL = ctx.createGain();
+var gainR = ctx.createGain();
+var pannerL = new PannerNode(ctx);
+var pannerR = new PannerNode(ctx);
+
+
+
+
+osc.connect(pannerL);
+osc2.connect(pannerR);
+pannerR.connect(gainR);
+pannerL.connect(gainL);
+gainL.connect(filterL);
+gainR.connect(filterR);
+filterL.connect(ctx.destination);
+filterR.connect(ctx.destination);
+
+pannerL.positionX.setValueAtTime(-1, ctx.currentTime + 1);
+pannerR.positionX.setValueAtTime(1, ctx.currentTime + 1);
+
+
+filterL.type = "highpass";
+filterL.frequency.setTargetAtTime(2000, ctx.currentTime, 10);
+
+filterR.type = "highpass";
+filterR.frequency.setTargetAtTime(2000, ctx.currentTime, 10);
+
+osc2.frequency.setValueAtTime(200, ctx.currentTime);
+osc.frequency.setValueAtTime(240, ctx.currentTime);
+gainL.gain.value = 0.2;
+gainR.gain.value = 0.2;
+
+osc.start(ctx.currentTime + 0.5);
+
+osc2.start(ctx.currentTime);
+
+
+
+
+
+
+setTimeout(function(){
+    osc.stop();
+}, 4000);
+
+setTimeout(function(){
+    osc2.stop();
+}, 4000);
+
+});
+
+
+
+</script>
+</html>
